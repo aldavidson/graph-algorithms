@@ -1,3 +1,5 @@
 .rspec
 coverage
 .rspec
+.byebug_history
+
