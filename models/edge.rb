@@ -8,8 +8,8 @@ class Edge
   attr_accessor :weight
 
   def initialize(args = {})
-    @node_from    = args[:node_from]
-    @node_to      = args[:node_to]
-    @node_weight  = args[:weight] || 1
+    @node_from  = args[:node_from]
+    @node_to    = args[:node_to]
+    @weight     = args[:weight] || 1
   end
 end

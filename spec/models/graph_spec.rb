@@ -57,7 +57,7 @@ describe Graph do
     let(:dave_tom){ Edge.new(node_from: dave, node_to: tom) }
 
     before do
-      [al, pete, dave].each{ |node| subject.add_node!(node) }
+      [al, pete, dave, tom].each{ |node| subject.add_node!(node) }
       subject.add_edge!(al_pete)
       subject.add_edge!(al_dave)
       subject.add_edge!(dave_tom)
@@ -152,6 +152,60 @@ describe Graph do
       it "visits nodes depth-first" do
         expect( visitor.nodes_visited_early ).to eq( [al, dave, tom, pete])
       end
+    end
+
+    describe '#dijkstra' do
+      let(:start_node_number){ 0 }
+
+      describe "the return value" do
+        let(:return_value){ subject.dijkstra(start_node_number) }
+
+        it "is a Hash" do
+          expect(return_value).to be_a(Hash)
+        end
+
+        it "has a key for distances" do
+          expect(return_value[:distances]).to_not be_nil
+        end
+        
+        it "has a key for parents" do
+          expect(return_value[:parents]).to_not be_nil
+        end
+
+        describe "distances key" do
+          let(:distances_key){ return_value[:distances] }
+
+          it "has a key for each node in the graph" do
+            expect(distances_key.keys.map(&:value).sort).to eq( subject.nodes.map(&:value).sort)
+          end
+
+          describe "each key" do
+            it "has a value equal to the shortest path to that node from the start" do
+              expect(distances_key[dave]).to eq(1)
+              expect(distances_key[pete]).to eq(1)
+              expect(distances_key[tom]).to eq(2)
+            end
+          end
+        end
+
+        describe "parents key" do
+          let(:parents_key){ return_value[:parents] }
+          
+          it "has a key for each node in the graph" do
+            expect(parents_key.keys.map(&:value).sort).to eq((subject.nodes.map(&:value) - ["al"]).sort)
+          end
+
+          describe "each key" do
+            it "has a value equal to the previous node on the shortest path to that node from the start" do
+              expect(parents_key[al]).to be_nil
+              expect(parents_key[dave]).to eq(al)
+              expect(parents_key[pete]).to eq(al)
+              expect(parents_key[tom]).to eq(dave)
+            end
+          end
+        end
+      end
+
     end
   end
   
